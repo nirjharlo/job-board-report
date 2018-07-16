@@ -1,0 +1,90 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: job-board-report\n"
+"POT-Creation-Date: 2018-07-16 20:59+0530\n"
+"PO-Revision-Date: 2017-07-20 10:26+0530\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.9\n"
+"X-Poedit-Basepath: ../..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: job-board-report.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: autoload.php:100
+msgid "Database table Not installed correctly."
+msgstr ""
+
+#: src/install.php:47
+msgid "The Plugin can't be activated because your PHP version"
+msgstr ""
+
+#: src/install.php:48
+msgid "is less than required 5.3. See more information"
+msgstr ""
+
+#: src/settings.php:39
+msgid "Title"
+msgstr ""
+
+#: src/settings.php:40
+msgid "Description"
+msgstr ""
+
+#: src/settings.php:43
+msgid "helpLink"
+msgstr ""
+
+#: src/settings.php:117
+msgid "Show per page"
+msgstr ""
+
+#: src/settings.php:141
+msgid "Save"
+msgstr ""
+
+#: src/settings.php:180
+msgid "Section Name"
+msgstr ""
+
+#: src/settings.php:182
+msgid "Field Name"
+msgstr ""
+
+#: src/settings.php:190
+msgid "Set up settings"
+msgstr ""
+
+#: src/settings.php:198
+msgid "Enter Value"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Job Board Report"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://jb.p2l.site"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Report genaration plugin for Job Board theme."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Nirjhar Lo"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://nirjharlo.com"
+msgstr ""
