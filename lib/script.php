@@ -4,31 +4,15 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! class_exists( 'PLUGIN_SCRIPT' ) ) {
+if ( ! class_exists( 'JBR_SCRIPT' ) ) {
 
-	final class PLUGIN_SCRIPT {
+	final class JBR_SCRIPT {
 
 
 		public function __construct() {
 
-			add_action( 'admin_head', array( $this, 'data_table_css' ) );
+			add_action( 'admin_footer', array( $this, 'datepicker_trigger' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'backend_scripts' ) );
-			add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts' ) );
-		}
-
-
-
-		// Table css for settings page data tables
-		public function data_table_css() {
-
-			// Set condition to add script
-			// if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'pageName' ) return;
-
-			$table_css = '<style type="text/css">
-							.wp-list-table .column-ColumnName { width: 100%; }
-						</style>';
-
-			return $table_css;
 		}
 
 
@@ -36,20 +20,36 @@ if ( ! class_exists( 'PLUGIN_SCRIPT' ) ) {
 		// Enter scripts into pages
 		public function backend_scripts() {
 
-			// Set condition to add script
-			// if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'pageName' ) return;
+			if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'job-board-report' ) return;
 
-			wp_enqueue_script( 'jsName', _PLUGIN_JS . 'ui.js', array() );
-			wp_enqueue_style( 'cssName', _PLUGIN_CSS . 'css.css' );
+			wp_register_script( 'jbr-moment', 'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js', array('jquery') );
+			wp_register_script( 'jbr-datepicker-js', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', array('jquery', 'jbr-moment') );
+
+			wp_enqueue_script( 'jbr-datepicker-js' );
+			wp_enqueue_style( 'jbr-datepicker-css', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css' );
 		}
 
 
+		// Custom datepicker script
+		public function datepicker_trigger() { ?>
 
-		// Enter scripts into pages
-		public function frontend_scripts() {
-
-			wp_enqueue_script( 'jsName', _PLUGIN_JS . 'ui.js', array() );
-			wp_enqueue_style( 'cssName', _PLUGIN_CSS . 'css.css' );
+			<script type="text/javascript">
+				jQuery(function() {
+					jQuery('input[name="jbr-date-picker"]').daterangepicker({
+						autoUpdateInput: false,
+						locale: {
+							cancelLabel: 'Clear'
+						}
+					});
+					jQuery('input[name="jbr-date-picker"]').on('apply.daterangepicker', function(ev, picker) {
+						jQuery(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+					});
+					jQuery('input[name="jbr-date-picker"]').on('cancel.daterangepicker', function(ev, picker) {
+						jQuery(this).val('');
+					});
+				});
+			</script>
+			<?php
 		}
 	}
 } ?>

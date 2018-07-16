@@ -17,7 +17,7 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 				$install->phpVerAllowed = '5.3';
 				$install->pluginPageLinks = array(
 												array(
-													'slug' => '',
+													'slug' => admin_url( 'options-general.php?page=job-board-report' ),
 													'label' => __( 'Generaate Report', 'jbr' )
 												),
 											);
