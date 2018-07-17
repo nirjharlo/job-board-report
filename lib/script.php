@@ -31,7 +31,9 @@ if ( ! class_exists( 'JBR_SCRIPT' ) ) {
 
 
 		// Custom datepicker script
-		public function datepicker_trigger() { ?>
+		public function datepicker_trigger() {
+
+			if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'job-board-report' ) return; ?>
 
 			<script type="text/javascript">
 				jQuery(function() {

@@ -26,6 +26,11 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 		}
 
 
+		public function old_data_install() {
+
+			if (class_exists('JBR_REGISTRATION_OLD_DATA')) new JBR_REGISTRATION_OLD_DATA();
+		}
+
 
 		public function db_install() {
 
@@ -35,8 +40,9 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 				$db->table = 'jbr_users';
 				$db->sql = "ID mediumint(9) NOT NULL AUTO_INCREMENT,
 							user_type VARCHAR(16) NOT NULL,
-							registration_date DATE NOT NULL,
-							UNIQUE KEY ID (ID)";
+							user_id SMALLINT(5) NOT NULL,
+							registration_date DATETIME NOT NULL,
+							UNIQUE KEY (ID, user_id)";
 				$db->build();
 			}
 
@@ -52,8 +58,8 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 				$db->sql = "ID mediumint(9) NOT NULL AUTO_INCREMENT,
 							search_type VARCHAR(32) NOT NULL,
 							candidate_count SMALLINT(5) NOT NULL,
-							search_date DATE NOT NULL,
-							UNIQUE KEY ID (ID)";
+							search_date DATETIME NOT NULL,
+							UNIQUE KEY (ID)";
 				$db->build();
 			}
 
@@ -77,10 +83,14 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 
 		public function db_uninstall() {
 
-			$tableName = 'jbr_search';
-
 			global $wpdb;
+
+			$tableName = 'jbr_users';
 			$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}$tableName" );
+
+			$tableName = 'jbr_searches';
+			$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}$tableName" );
+
 			$options = array(
 								'_jbr_db_exist',
 
@@ -91,13 +101,25 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 		}
 
 
-
 		//Include scripts
 		public function scripts() {
 
 			if ( class_exists( 'JBR_SCRIPT' ) ) new JBR_SCRIPT();
 		}
 
+
+		//Include data in plugin's tables
+		public function get_user_data() {
+
+			if ( class_exists( 'JBR_REGISTRATION' ) ) new JBR_REGISTRATION();
+		}
+
+
+		//Include search data
+		public function get_search_data() {
+
+			if ( class_exists( 'JBR_SEARCH' ) ) new JBR_SEARCH();
+		}
 
 
 		//Include settings pages
@@ -122,8 +144,10 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 		public function helpers() {
 
 			require_once ('lib/script.php');
+			require_once ('lib/data/search.php');
+			require_once ('lib/data/registration.php');
+			require_once ('lib/data/registration-old.php');
 		}
-
 
 
 		public function __construct() {
@@ -132,14 +156,17 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 			$this->functionality();
 
 			register_activation_hook( JBR_FILE, array( $this, 'db_install' ) );
+			register_activation_hook( JBR_FILE, array( $this, 'old_data_install' ) );
 
 			//remove the DB upon uninstallation
 			register_uninstall_hook( JBR_FILE, array( 'JBR_BUILD', 'db_uninstall' ) ); //$this won't work here.
 
 			add_action('init', array($this, 'installation'));
+			add_action('wp', array($this, 'get_search_data'));
 
 			$this->scripts();
 
+			$this->get_user_data();
 			$this->settings();
 		}
 	}
