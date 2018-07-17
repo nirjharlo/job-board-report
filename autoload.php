@@ -56,7 +56,7 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 				$db = new JBR_DB();
 				$db->table = 'jbr_searches';
 				$db->sql = "ID mediumint(9) NOT NULL AUTO_INCREMENT,
-							search_type VARCHAR(32) NOT NULL,
+							search_type VARCHAR(512) NOT NULL,
 							candidate_count SMALLINT(5) NOT NULL,
 							search_date DATETIME NOT NULL,
 							UNIQUE KEY (ID)";
@@ -122,6 +122,12 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 		}
 
 
+		//Include candidate filter AJAX search data
+		public function get_user_data_ajax() {
+
+			if ( class_exists( 'JBR_SEARCH_AJAX' ) ) new JBR_SEARCH_AJAX();
+		}
+
 		//Include settings pages
 		public function settings() {
 
@@ -145,6 +151,7 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 
 			require_once ('lib/script.php');
 			require_once ('lib/data/search.php');
+			require_once ('lib/data/search-ajax.php');
 			require_once ('lib/data/registration.php');
 			require_once ('lib/data/registration-old.php');
 		}
@@ -162,11 +169,12 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 			register_uninstall_hook( JBR_FILE, array( 'JBR_BUILD', 'db_uninstall' ) ); //$this won't work here.
 
 			add_action('init', array($this, 'installation'));
-			add_action('wp', array($this, 'get_search_data'));
+			add_action('template_redirect', array($this, 'get_search_data'));
 
 			$this->scripts();
 
 			$this->get_user_data();
+			$this->get_user_data_ajax();
 			$this->settings();
 		}
 	}

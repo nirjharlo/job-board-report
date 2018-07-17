@@ -13,9 +13,20 @@ if ( ! class_exists( 'JBR_SEARCH' ) ) {
 		public function __construct() {
 
 			$this->table_name = 'jbr_searches';
+
 			if ( is_page( 'candidates' ) ) {
+
 				if( is_user_logged_in() ) {
-					var_dump('As%Tu');
+
+					$user = wp_get_current_user();
+					$roles = (array) $user->roles;
+					$role = $roles[0];
+
+					if ($role == 'iwj_employer') {
+
+						// Save search data for logged in employers
+						$this->search_save();
+					}
 				}
 			}
 		}
@@ -24,20 +35,22 @@ if ( ! class_exists( 'JBR_SEARCH' ) ) {
 		// Save user role in plugin table
 		public function search_save() {
 
-			if ( isset( $_GET['role'] ) ) {
-				$role = $_GET['role'];
-			}
+			if ( isset( $_GET['iwj_cat'] ) ) {
+
+				$categories = $_GET['iwj_cat'];
+				$candidate_count = 0;
 
 				global $wpdb;
 				$wpdb->insert(
 						$wpdb->prefix . $this->table_name,
 						array(
-							'user_type' => $role,
-							'user_id' => $user_id,
-							'registration_date' => current_time('mysql')
+							'search_type' => maybe_serialize($categories),
+							'candidate_count' => $candidate_count,
+							'search_date' => current_time('mysql')
 						),
 						array( '%s', '%d', '%s' )
 				);
+			}
 		}
 	}
 } ?>
