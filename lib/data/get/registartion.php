@@ -13,14 +13,14 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 
 		public function __construct() {
 
-			$this->table_name = 'jbr_users';
+			$this->table_name = 'jbr_searches';
 		}
 
 
 		//Get the data
 		public function data() {
 
-			$total = $this->total_registration_get();
+			$total = $this->candidtae_get();
 
 			$month = array();
 			foreach ($this->date_range as $key => $value) {
@@ -35,7 +35,7 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 
 
 		//Get total registration
-		public function total_registration_get() {
+		public function candidtae_get() {
 
 			global $wpdb;
 			$registration = $wpdb->get_results(

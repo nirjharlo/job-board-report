@@ -32,7 +32,8 @@ if ( ! class_exists( 'JBR_SEARCH_AJAX_SAVE' ) ) {
 					$role = $roles[0];
 
 					if ($role == 'iwj_employer') {
-					?>
+
+						$init_data = $this->candidates_init(); ?>
 
 					<script type="text/javascript">
 						jQuery(document).ready(function() {
@@ -44,14 +45,30 @@ if ( ! class_exists( 'JBR_SEARCH_AJAX_SAVE' ) ) {
 								candidate_count[id_value] = count;
 							});
 
-							var search_type = new Array();
-							var candidates = 0;
+							//Prinit the initial data through PHP
+							var search_type = <?php echo ( array_key_exists('terms', $init_data) ? '[' . implode(',', $init_data['terms']) . ']' : 'new Array()' ); ?>;
+							var candidates = <?php echo ( array_key_exists('candidate_count', $init_data) ? $init_data['candidate_count'] : 0 ); ?>;
+
+
+							jQuery('body').delegate('#clear-filter-candidate', 'click', function(e) {
+								search_type = new Array();
+								candidates = 0;
+							});
+
 							jQuery('body').delegate('.iwjob-list-iwj_cat .iwjob-filter-candidates-cbx', 'change', function(e) {
 
+									var isActive = jQuery(this).parent().parent().attr('class');
 									var id_value = jQuery(this).val();
-									search_type.push(id_value);
-									candidates += parseInt(candidate_count[id_value]);
-console.log(candidates);
+
+									// Check if the filter is active
+									if (isActive.indexOf("checked") == -1) {
+										search_type.splice( search_type.indexOf(id_value), 1 );
+										candidates -= parseInt(candidate_count[id_value]);
+									} else {
+										search_type.push(id_value);
+										candidates += parseInt(candidate_count[id_value]);
+									}
+
 									jQuery(this).off();
 									jQuery.post(
 										<?php if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") { ?>
@@ -103,6 +120,32 @@ console.log(candidates);
 				echo 'ok';
 			}
 			wp_die();
+		}
+
+
+		//Get initial candidates
+		public function candidates_init() {
+
+			$candidate_count = 0;
+			$data = array();
+
+			//Using the Inwave Job plugin functions
+			if (class_exists('IWJ_Candidate_Listing') && class_exists('IWJ_Candidate_Listing')) {
+				$filters = IWJ_Candidate_Listing::get_data_filters();
+				$query = IWJ_Candidate_Listing::get_query_candidates($filters);
+
+				$data['candidate_count'] = $query->post_count;
+				$terms_arr = (array) $query->tax_query->queried_terms;
+				if (array_key_exists('iwj_cat', $terms_arr)) {
+					$term_data = $terms_arr['iwj_cat'];
+					if (array_key_exists('terms', $term_data)) {
+						$terms = $term_data['terms'];
+						$data['terms'] = $terms;
+					}
+				}
+			}
+
+			return $data;
 		}
 	}
 } ?>

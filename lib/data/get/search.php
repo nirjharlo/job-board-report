@@ -9,8 +9,7 @@ if ( ! class_exists( 'JBR_SEARCH_GET' ) ) {
 	final class JBR_SEARCH_GET {
 
 		public $table_name;
-		public $start_date;
-		public $end_date;
+		public $date_range;
 
 		public function __construct() {
 

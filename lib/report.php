@@ -18,8 +18,8 @@ if ( ! class_exists( 'JBR_REPORT' ) ) {
 
 		public function report() {
 
-			$this->registration_data();
-			$this->search_data();
+			$registration = $this->registration_data();
+			$search = $this->search_data();
 		}
 
 
@@ -28,12 +28,18 @@ if ( ! class_exists( 'JBR_REPORT' ) ) {
 			$registration = new JBR_REGISTRATION_GET();
 			$registration->date_range = $this->date_range;
 			$registration_data = $registration->data();
+
+			return $registration_data;
 		}
 
 
 		public function search_data() {
 
-			
+			$search = new JBR_REGISTRATION_GET();
+			$search->date_range = $this->date_range;
+			$search_data = $search->data();
+
+			return $search_data;
 		}
 	}
 } ?>

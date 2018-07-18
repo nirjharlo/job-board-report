@@ -67,7 +67,8 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 
 			$date_range = $this->date_range();
 
-			if (class_exists('JBR_REPORT')) {
+			if ($date_range != false && class_exists('JBR_REPORT')) {
+
 				$report = new JBR_REPORT();
 				$report->date_range = $date_range;
 				$report->generate();
