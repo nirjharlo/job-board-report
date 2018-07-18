@@ -4,9 +4,9 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! class_exists( 'JBR_REGISTRATION_OLD_DATA' ) ) {
+if ( ! class_exists( 'JBR_REGISTRATION_OLD_DATA_SAVE' ) ) {
 
-	final class JBR_REGISTRATION_OLD_DATA {
+	final class JBR_REGISTRATION_OLD_DATA_SAVE {
 
 		public $table_name;
 

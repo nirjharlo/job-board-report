@@ -44,7 +44,7 @@ if ( ! class_exists( 'JBR_SCRIPT' ) ) {
 						}
 					});
 					jQuery('input[name="jbr-date-picker"]').on('apply.daterangepicker', function(ev, picker) {
-						jQuery(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+						jQuery(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
 					});
 					jQuery('input[name="jbr-date-picker"]').on('cancel.daterangepicker', function(ev, picker) {
 						jQuery(this).val('');

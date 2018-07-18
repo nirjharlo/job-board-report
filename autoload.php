@@ -28,7 +28,7 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 
 		public function old_data_install() {
 
-			if (class_exists('JBR_REGISTRATION_OLD_DATA')) new JBR_REGISTRATION_OLD_DATA();
+			if (class_exists('JBR_REGISTRATION_OLD_DATA_SAVE')) new JBR_REGISTRATION_OLD_DATA_SAVE();
 		}
 
 
@@ -111,21 +111,21 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 		//Include data in plugin's tables
 		public function get_user_data() {
 
-			if ( class_exists( 'JBR_REGISTRATION' ) ) new JBR_REGISTRATION();
+			if ( class_exists( 'JBR_REGISTRATION_SAVE' ) ) new JBR_REGISTRATION_SAVE();
 		}
 
 
 		//Include search data
 		public function get_search_data() {
 
-			if ( class_exists( 'JBR_SEARCH' ) ) new JBR_SEARCH();
+			if ( class_exists( 'JBR_SEARCH_SAVE' ) ) new JBR_SEARCH_SAVE();
 		}
 
 
 		//Include candidate filter AJAX search data
-		public function get_user_data_ajax() {
+		public function get_search_data_ajax() {
 
-			if ( class_exists( 'JBR_SEARCH_AJAX' ) ) new JBR_SEARCH_AJAX();
+			if ( class_exists( 'JBR_SEARCH_AJAX_SAVE' ) ) new JBR_SEARCH_AJAX_SAVE();
 		}
 
 		//Include settings pages
@@ -150,31 +150,38 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 		public function helpers() {
 
 			require_once ('lib/script.php');
-			require_once ('lib/data/search.php');
-			require_once ('lib/data/search-ajax.php');
-			require_once ('lib/data/registration.php');
-			require_once ('lib/data/registration-old.php');
+			require_once ('lib/report.php');
+
+			require_once ('lib/data/push/search.php');
+			require_once ('lib/data/push/search-ajax.php');
+			require_once ('lib/data/push/registration.php');
+			require_once ('lib/data/push/registration-old.php');
+
+			require_once ('lib/data/get/registartion.php');
 		}
 
 
 		public function __construct() {
 
+			//Get dependencies
 			$this->helpers();
 			$this->functionality();
 
+			//Plugin installation
 			register_activation_hook( JBR_FILE, array( $this, 'db_install' ) );
-			register_activation_hook( JBR_FILE, array( $this, 'old_data_install' ) );
+			add_action('init', array($this, 'installation'));
 
 			//remove the DB upon uninstallation
 			register_uninstall_hook( JBR_FILE, array( 'JBR_BUILD', 'db_uninstall' ) ); //$this won't work here.
 
-			add_action('init', array($this, 'installation'));
-			add_action('template_redirect', array($this, 'get_search_data'));
-
-			$this->scripts();
-
+			//Store registration and search data
+			register_activation_hook( JBR_FILE, array( $this, 'old_data_install' ) );
 			$this->get_user_data();
-			$this->get_user_data_ajax();
+			add_action('template_redirect', array($this, 'get_search_data'));
+			$this->get_search_data_ajax();
+
+			//Plugin admin side
+			$this->scripts();
 			$this->settings();
 		}
 	}

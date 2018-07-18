@@ -4,9 +4,9 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! class_exists( 'JBR_SEARCH' ) ) {
+if ( ! class_exists( 'JBR_SEARCH_SAVE' ) ) {
 
-	final class JBR_SEARCH {
+	final class JBR_SEARCH_SAVE {
 
 		public $table_name;
 
@@ -37,8 +37,10 @@ if ( ! class_exists( 'JBR_SEARCH' ) ) {
 
 			if ( isset( $_GET['iwj_cat'] ) ) {
 
+				global $wp_query;
+
 				$categories = $_GET['iwj_cat'];
-				$candidate_count = 0;
+				$candidate_count = $wp_query->post_count;
 
 				global $wpdb;
 				$wpdb->insert(

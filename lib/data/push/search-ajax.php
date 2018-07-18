@@ -4,9 +4,9 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! class_exists( 'JBR_SEARCH_AJAX' ) ) {
+if ( ! class_exists( 'JBR_SEARCH_AJAX_SAVE' ) ) {
 
-	final class JBR_SEARCH_AJAX {
+	final class JBR_SEARCH_AJAX_SAVE {
 
 		public $table_name;
 
@@ -14,7 +14,7 @@ if ( ! class_exists( 'JBR_SEARCH_AJAX' ) ) {
 
 			$this->table_name = 'jbr_searches';
 
-			add_action( 'wp_footer', array( $this, 'jbr_candidate_category_filter_js' ), 20 );
+			add_action( 'wp_footer', array( $this, 'jbr_candidate_category_filter_js' ), 200 );
 			add_action( 'wp_ajax_jbr_candidate_category_filter', array( $this, 'jbr_candidate_category_filter' ) );
 			add_action( 'wp_ajax_nopriv_jbr_candidate_category_filter', array( $this, 'jbr_candidate_category_filter' ) );
 		}
@@ -36,11 +36,22 @@ if ( ! class_exists( 'JBR_SEARCH_AJAX' ) ) {
 
 					<script type="text/javascript">
 						jQuery(document).ready(function() {
+
+							var candidate_count = {};
+							jQuery('.iwjob-list-iwj_cat .iwjob-filter-candidates-cbx').each(function(){
+								var id_value = jQuery(this).val();
+								var count = jQuery('#iwj-count-'+id_value).text();
+								candidate_count[id_value] = count;
+							});
+
 							var search_type = new Array();
-							jQuery(".iwjob-list-iwj_cat li div .iwjob-filter-candidates-cbx").on('click', function() {
+							var candidates = 0;
+							jQuery('body').delegate('.iwjob-list-iwj_cat .iwjob-filter-candidates-cbx', 'change', function(e) {
 
-									search_type.push(jQuery(this).val());
-
+									var id_value = jQuery(this).val();
+									search_type.push(id_value);
+									candidates += parseInt(candidate_count[id_value]);
+console.log(candidates);
 									jQuery(this).off();
 									jQuery.post(
 										<?php if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") { ?>
@@ -48,7 +59,7 @@ if ( ! class_exists( 'JBR_SEARCH_AJAX' ) ) {
 										<?php } else { ?>
 											'<?php echo admin_url("admin-ajax.php"); ?>',
 										<?php } ?>
-										{ 'action': 'jbr_candidate_category_filter', 'search_type': search_type },
+										{ 'action': 'jbr_candidate_category_filter', 'search_type': search_type, 'candidates': candidates },
 										function(response) {
 											if ( response == 'ok' || response == 'ok0' ) {
 												console.log('<?php _e( 'Search Saved', 'jbr'); ?>');
@@ -68,7 +79,7 @@ if ( ! class_exists( 'JBR_SEARCH_AJAX' ) ) {
 		public function jbr_candidate_category_filter() {
 
 			$categories = $_POST['search_type'];
-			$candidate_count = 0;
+			$candidate_count = $_POST['candidates'];
 
 			global $wpdb;
 

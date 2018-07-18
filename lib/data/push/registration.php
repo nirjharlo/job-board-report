@@ -4,15 +4,16 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! class_exists( 'JBR_REGISTRATION' ) ) {
+if ( ! class_exists( 'JBR_REGISTRATION_SAVE' ) ) {
 
-	final class JBR_REGISTRATION {
+	final class JBR_REGISTRATION_SAVE {
 
 		public $table_name;
 
 		public function __construct() {
 
 			$this->table_name = 'jbr_users';
+
 			add_action( 'user_register', array( $this, 'registration_save' ), 50, 1 );
 		}
 
