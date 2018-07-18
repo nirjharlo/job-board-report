@@ -14,7 +14,7 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 
 				$install = new JBR_INSTALL();
 				$install->textDomin = 'jbr';
-				$install->phpVerAllowed = '5.3';
+				$install->phpVerAllowed = '5.4';
 				$install->pluginPageLinks = array(
 												array(
 													'slug' => admin_url( 'options-general.php?page=job-board-report' ),

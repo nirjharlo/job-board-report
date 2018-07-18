@@ -8,13 +8,11 @@ if ( ! class_exists( 'JBR_SCRIPT' ) ) {
 
 	final class JBR_SCRIPT {
 
-
 		public function __construct() {
 
 			add_action( 'admin_footer', array( $this, 'datepicker_trigger' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'backend_scripts' ) );
 		}
-
 
 
 		// Enter scripts into pages
@@ -38,19 +36,32 @@ if ( ! class_exists( 'JBR_SCRIPT' ) ) {
 			<script type="text/javascript">
 				jQuery(function() {
 					jQuery('input[name="jbr-date-picker"]').daterangepicker({
-						autoUpdateInput: false,
-						locale: {
-							cancelLabel: 'Clear'
-						}
+						'showDropdowns': false,
+						'minYear': 2017,
+						'maxYear': <?php echo date('Y', strtotime('+1 year')); ?>,
+						'autoUpdateInput': false,
+						'autoApply': false,
 					});
+
 					jQuery('input[name="jbr-date-picker"]').on('apply.daterangepicker', function(ev, picker) {
 						jQuery(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
 					});
+
 					jQuery('input[name="jbr-date-picker"]').on('cancel.daterangepicker', function(ev, picker) {
 						jQuery(this).val('');
 					});
 				});
 			</script>
+
+			<style type="text/css">
+				/**.drp-calendar .table-condensed thead tr:nth-child(2),
+				.drp-calendar .table-condensed tbody {
+					display: none
+				}*/
+				.drp-calendar .calendar-table {
+					width: 244px;
+				}
+			</style>
 			<?php
 		}
 	}

@@ -8,23 +8,32 @@ if ( ! class_exists( 'JBR_REPORT' ) ) {
 
 	final class JBR_REPORT {
 
-		public function __construct() {
+		public $date_range;
 
+		public function generate() {
+
+			$this->report();
 		}
 
 
 		public function report() {
 
-			
+			$this->registration_data();
+			$this->search_data();
 		}
 
 
 		public function registration_data() {
 
 			$registration = new JBR_REGISTRATION_GET();
-			$registration->start_date = '2018-07-04';
-			$registration->end_date = '2018-08-30';
+			$registration->date_range = $this->date_range;
 			$registration_data = $registration->data();
+		}
+
+
+		public function search_data() {
+
+			
 		}
 	}
 } ?>

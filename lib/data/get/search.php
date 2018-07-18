@@ -4,12 +4,13 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
+if ( ! class_exists( 'JBR_SEARCH_GET' ) ) {
 
-	final class JBR_REGISTRATION_GET {
+	final class JBR_SEARCH_GET {
 
 		public $table_name;
-		public $date_range;
+		public $start_date;
+		public $end_date;
 
 		public function __construct() {
 
@@ -21,13 +22,7 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 		public function data() {
 
 			$total = $this->total_registration_get();
-
-			$month = array();
-			foreach ($this->date_range as $key => $value) {
-				$current_month = array();
-				$current_month[$key] = $this->month_registration_get($value['start'], $value['end']);
-				$month = array_merge($month, $current_month);
-			}
+			$month = $this->month_registration_get($this->start_date, $this->end_date);
 
 			$data = array_merge($total, $month);
 			return $data;
@@ -45,16 +40,16 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 			$employer_total = array_count_values(
 								array_filter(
 									array_map(function($item) {
-										if ( $item['user_type'] == 'employer' ) { return 'employer'; }
+										if ( $item['user_type'] == 'employer' ) { return 'employer_total'; }
 									}, $registration )));
 
 			$candidate_total = array_count_values(
 								array_filter(
 									array_map(function($item) {
-										if ( $item['user_type'] == 'candidate' ) { return 'candidate'; }
+										if ( $item['user_type'] == 'candidate' ) { return 'candidate_total'; }
 									}, $registration )));
-			$total = array();
-			$total['total'] = array_merge($employer_total, $candidate_total);
+
+			$total = array_merge($employer_total, $candidate_total);
 			return $total;
 		}
 
@@ -72,13 +67,13 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 			$employer_month = array_count_values(
 								array_filter(
 									array_map(function($item) {
-										if ( $item['user_type'] == 'employer' ) { return 'employer'; }
+										if ( $item['user_type'] == 'employer' ) { return 'employer_month'; }
 									}, $registration )));
 
 			$candidate_month = array_count_values(
 								array_filter(
 									array_map(function($item) {
-										if ( $item['user_type'] == 'candidate' ) { return 'candidate'; }
+										if ( $item['user_type'] == 'candidate' ) { return 'candidate_month'; }
 									}, $registration )));
 
 			$month = array_merge($employer_month, $candidate_month);
