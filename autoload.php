@@ -158,6 +158,7 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 			require_once ('lib/data/push/registration-old.php');
 
 			require_once ('lib/data/get/registartion.php');
+			require_once ('lib/data/get/search.php');
 		}
 
 

@@ -13,14 +13,20 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 
 		public function __construct() {
 
-			$this->table_name = 'jbr_searches';
+			$this->table_name = 'jbr_users';
 		}
 
 
 		//Get the data
 		public function data() {
 
-			$total = $this->candidtae_get();
+			$reverse_date_range = array_reverse($this->date_range);
+			$start_date_string = array_pop($reverse_date_range);
+			$end_date_string = array_pop($this->date_range);
+			$start_date = $start_date_string['start'];
+			$end_date = $end_date_string['end'];
+
+			$total = $this->total_registration_get($start_date, $end_date);
 
 			$month = array();
 			foreach ($this->date_range as $key => $value) {
@@ -35,27 +41,21 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 
 
 		//Get total registration
-		public function candidtae_get() {
+		public function total_registration_get($start, $end) {
 
 			global $wpdb;
 			$registration = $wpdb->get_results(
-				"SELECT * FROM {$wpdb->prefix}$this->table_name", 'ARRAY_A'
+				"SELECT * FROM {$wpdb->prefix}$this->table_name 
+				WHERE registration_date > '$start' and registration_date <= '$end'", 'ARRAY_A'
 			);
+			if (count($registration) == 0) return;
 
-			$employer_total = array_count_values(
-								array_filter(
-									array_map(function($item) {
-										if ( $item['user_type'] == 'employer' ) { return 'employer'; }
-									}, $registration )));
+			$employer = $this->get_value($registration, 'employer');
+			$candidate = $this->get_value($registration, 'candidate');
 
-			$candidate_total = array_count_values(
-								array_filter(
-									array_map(function($item) {
-										if ( $item['user_type'] == 'candidate' ) { return 'candidate'; }
-									}, $registration )));
-			$total = array();
-			$total['total'] = array_merge($employer_total, $candidate_total);
-			return $total;
+			$data = array_merge($employer, $candidate);
+
+			return array( 'total' => $data );
 		}
 
 
@@ -68,21 +68,25 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 				WHERE registration_date > '$start' and registration_date <= '$end'"
 				, 'ARRAY_A'
 			);
+			if (count($registration) == 0) return;
 
-			$employer_month = array_count_values(
-								array_filter(
-									array_map(function($item) {
-										if ( $item['user_type'] == 'employer' ) { return 'employer'; }
-									}, $registration )));
-
-			$candidate_month = array_count_values(
-								array_filter(
-									array_map(function($item) {
-										if ( $item['user_type'] == 'candidate' ) { return 'candidate'; }
-									}, $registration )));
+			$employer_month = $this->get_value($registration, 'employer');
+			$candidate_month = $this->get_value($registration, 'candidate');
 
 			$month = array_merge($employer_month, $candidate_month);
 			return $month;
+		}
+
+
+		//Format the array to get value
+		public function get_value($array, $type) {
+
+			$values = array_count_values(
+							array_filter(
+								array_map(function($item) use ($type) {
+									if ( $item['user_type'] == $type ) { return $type; }
+								}, $array )));
+			return $values;
 		}
 	}
 } ?>

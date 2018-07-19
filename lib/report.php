@@ -20,6 +20,9 @@ if ( ! class_exists( 'JBR_REPORT' ) ) {
 
 			$registration = $this->registration_data();
 			$search = $this->search_data();
+
+			var_dump($registration);
+			var_dump($search);
 		}
 
 
@@ -35,7 +38,7 @@ if ( ! class_exists( 'JBR_REPORT' ) ) {
 
 		public function search_data() {
 
-			$search = new JBR_REGISTRATION_GET();
+			$search = new JBR_SEARCH_GET();
 			$search->date_range = $this->date_range;
 			$search_data = $search->data();
 
