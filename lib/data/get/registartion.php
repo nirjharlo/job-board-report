@@ -20,10 +20,16 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 		//Get the data
 		public function data() {
 
-			$reverse_date_range = array_reverse($this->date_range);
+			//Assign new varaibale to avoid change in array for latter use
+			$date_range = $this->date_range;
+
+			//Get start date
+			$reverse_date_range = array_reverse($date_range);
 			$start_date_string = array_pop($reverse_date_range);
-			$end_date_string = array_pop($this->date_range);
 			$start_date = $start_date_string['start'];
+
+			//Get end date
+			$end_date_string = array_pop($date_range);
 			$end_date = $end_date_string['end'];
 
 			$total = $this->total_registration_get($start_date, $end_date);

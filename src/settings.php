@@ -12,7 +12,6 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 		public $subMenuPage;
 
 
-
 		// Add basic actions for menu and settings
 		public function __construct() {
 
@@ -25,7 +24,6 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 
 			add_action( 'admin_menu', array( $this, 'sub_menu_page' ) );
 		}
-
 
 
 		//Add a sample Submenu page callback
@@ -41,7 +39,6 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 						);
 				}
 			}
-
 
 
 		// Menu page callback
@@ -66,7 +63,6 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 		public function generate_report() {
 
 			$date_range = $this->date_range();
-
 			if ($date_range != false && class_exists('JBR_REPORT')) {
 
 				$report = new JBR_REPORT();
