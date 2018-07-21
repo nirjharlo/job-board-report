@@ -41,7 +41,7 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 				$month = array_merge($month, $current_month);
 			}
 
-			$data = array_merge($total, $month);
+			$data = array_merge($total, array( 'month' => $month ));
 			return $data;
 		}
 

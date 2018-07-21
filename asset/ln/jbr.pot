@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: job-board-report\n"
-"POT-Creation-Date: 2018-07-21 00:13+0530\n"
+"POT-Creation-Date: 2018-07-21 06:49+0530\n"
 "PO-Revision-Date: 2017-07-20 10:26+0530\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -31,6 +31,38 @@ msgstr ""
 
 #: lib/data/push/search-ajax.php:82
 msgid "Search Saved"
+msgstr ""
+
+#: lib/pdf.php:68
+msgid "Month"
+msgstr ""
+
+#: lib/report.php:24
+msgid " to "
+msgstr ""
+
+#: lib/report.php:27
+msgid "Pharmacist Locum and Team Recruitment Program Monthly Report Data"
+msgstr ""
+
+#: lib/report.php:29
+msgid "Total number of registrations"
+msgstr ""
+
+#: lib/report.php:32
+msgid "Monthly number of registrations"
+msgstr ""
+
+#: lib/report.php:35
+msgid "Total Database Members, Candidates and Employers."
+msgstr ""
+
+#: lib/report.php:38
+msgid "Number of Employer Database Searches"
+msgstr ""
+
+#: lib/report.php:41
+msgid "Average Total number of candidates appearing in database search"
 msgstr ""
 
 #: src/install.php:47

@@ -62,17 +62,18 @@ if ( ! class_exists( 'JBR_SEARCH_GET' ) ) {
 			$formatted = $this->format($candidates);
 			if (count($formatted) == 0) return;
 
+
+			$count['all-positions'] = $this->get_average( array_filter(
+											array_map(function($item) {
+												return $item['candidate_count'];
+											}, $formatted )));
+
 			$count['pharmacist'] = $this->candidates($formatted, 'pharmacist');
 			$count['pharmacy-intern-and-student'] = $this->candidates($formatted, 'pharmacy-intern-and-student');
 			$count['dispensary-assistant'] = $this->candidates($formatted, 'dispensary-assistant');
 			$count['pharmacy-assistant'] = $this->candidates($formatted, 'pharmacy-assistant');
 			$count['pharmacy-manager'] = $this->candidates($formatted, 'pharmacy-manager');
 			$count['retail-manager'] = $this->candidates($formatted, 'retail-manager');
-
-			$count['total'] = $this->get_average( array_filter(
-											array_map(function($item) {
-												return $item['candidate_count'];
-											}, $formatted )));
 
 			return $count;
 		}
@@ -100,7 +101,7 @@ if ( ! class_exists( 'JBR_SEARCH_GET' ) ) {
 			$type['pharmacy-manager'] = $this->search_type($formatted, 'pharmacy-manager');
 			$type['retail-manager'] = $this->search_type($formatted, 'retail-manager');
 
-			$type['total'] = array_sum( array_filter(
+			$type['all-positions'] = array_sum( array_filter(
 								array_map(function($item) {
 
 									$type = $item['search_type'];
@@ -167,7 +168,7 @@ if ( ! class_exists( 'JBR_SEARCH_GET' ) ) {
 		public function get_average($data) {
 
 			if (count($data) == 0) {
-				$average = 'ERROR';
+				$average = 0;
 			} else {
 				$average = round( array_sum($data)/count($data) );
 			}

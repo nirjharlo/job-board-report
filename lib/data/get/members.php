@@ -11,8 +11,27 @@ if ( ! class_exists( 'JBR_MEMBER_GET' ) ) {
 
 		public function data() {
 
+			$input = $this->general_input();
+			$data = $this->prepare();
+
+			$output = array();
+			foreach ($input as $key) {
+				if ($key != 'pharmacist' && $key != 'pharmacy-intern-and-student') {
+					$output[$key] = array_sum(array_column($data, $key));
+				} else {
+					$output[$key] = array_column($data, $key);
+				}
+			}
+
+			return $output;
+		}
+
+
+		//Data preparation
+		public function prepare() {
+
 			$data = array();
-			$post_types = array( 'iwj_job', 'iwj_employer', 'iwj_candidate' );
+			$post_types = array( 'iwj_employer', 'iwj_candidate' );//'iwj_job', 'iwj_employer', 'iwj_candidate' );
 			foreach ($post_types as $post_type) {
 				if ($post_type == 'iwj_candidate') {
 					$data[$post_type] = $this->candidate_data($post_type);
@@ -28,7 +47,7 @@ if ( ! class_exists( 'JBR_MEMBER_GET' ) ) {
 		//Get job and employer data
 		public function job_employer_data($post_type) {
 
-			$input = $this->job_employer_input();
+			$input = $this->general_input();
 
 			$data = array();
 			foreach ($input as $cat) {
@@ -51,7 +70,7 @@ if ( ! class_exists( 'JBR_MEMBER_GET' ) ) {
 
 					$type_array = array();
 					foreach ($value as $type) {
-				 		//$type_array[$type] = $this->posts_get($post_type, $key, $type);
+				 		$type_array[$type] = $this->posts_get($post_type, $key, $type);
 					}
 		 			$type_array['or'] = $this->posts_get($post_type, $key, array( $value[0], $value[1] ));
 					$output = $type_array;
@@ -69,7 +88,7 @@ if ( ! class_exists( 'JBR_MEMBER_GET' ) ) {
 
 
 		//Get the input for job and employer post type
-		public function job_employer_input() {
+		public function general_input() {
 
 			return array(
 						'pharmacist',

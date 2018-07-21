@@ -135,6 +135,12 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 		}
 
 
+		//Add vendor files of fPdf
+		public function vendor() {
+
+			require_once ('vendor/fpdf181/fpdf.php');
+		}
+
 
 		//Add functionality files
 		public function functionality() {
@@ -145,11 +151,11 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 		}
 
 
-
 		//Call the dependency files
 		public function helpers() {
 
 			require_once ('lib/script.php');
+			require_once ('lib/pdf.php');
 			require_once ('lib/report.php');
 
 			require_once ('lib/data/push/search.php');
@@ -166,6 +172,7 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 		public function __construct() {
 
 			//Get dependencies
+			$this->vendor();
 			$this->helpers();
 			$this->functionality();
 
