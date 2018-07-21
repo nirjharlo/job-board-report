@@ -95,6 +95,7 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 		//Action on email form submit
 		public function email_report() {
 
+			$emailed = false;
 			$date_range = $this->date_range();
 			$emails = $this->email_list();
 
@@ -112,7 +113,7 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 				}
 			}
 
-			if ($emailed) {
+			if (false != $emailed) {
 				$this->email_sent_msg($emailed);
 			}
 		}
