@@ -76,10 +76,13 @@ if ( ! class_exists( 'JBR_PDF' ) ) {
 
 				if ($row != NULL && $row != false) {
 
+					$employer = array_key_exists($heading[1], $row) ? $row[$heading[1]] : 0;
+					$candidate = array_key_exists($heading[2], $row) ? $row[$heading[2]] : 0;
+
 					$this->Cell(45,6,str_replace('-', ', ', ($month)),0,0,'L',$fill);
-					$this->Cell(45,6,number_format($row[$heading[1]]+$row[$heading[2]]),0,0,'C',$fill);
-					$this->Cell(45,6,number_format($row[$heading[1]]),0,0,'C',$fill);
-					$this->Cell(45,6,number_format($row[$heading[2]]),0,0,'R',$fill);
+					$this->Cell(45,6,number_format($employer+$candidate),0,0,'C',$fill);
+					$this->Cell(45,6,number_format($employer),0,0,'C',$fill);
+					$this->Cell(45,6,number_format($candidate),0,0,'R',$fill);
 					$this->Ln();
 					$fill = !$fill;
 				}
