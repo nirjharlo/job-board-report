@@ -9,6 +9,7 @@ if ( ! class_exists( 'JBR_REPORT' ) ) {
 	final class JBR_REPORT {
 
 		public $date_range;
+		public $execution;
 
 		public function generate() {
 
@@ -56,8 +57,7 @@ if ( ! class_exists( 'JBR_REPORT' ) ) {
 			$pdf->SearchTable($search_header,$search_data);
 			$pdf->Ln(10);
 			$pdf->CandidateTable($candidate_header,$candidate_data);
-
-			$pdf->Output('D', 'report.pdf');
+			return $pdf->Output($this->execution, 'report.pdf');
 		}
 
 

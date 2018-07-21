@@ -17,10 +17,19 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 
 			$this->capability = 'manage_options';
 			$this->subMenuPage = array(
-									'name' => __( 'Job Board Report', 'gbr' ),
-									'heading' => __( 'Job Board Report', 'gbr' ),
-									'slug' => 'job-board-report'
-								);
+									array(
+										'name' => __( 'Job Board Report', 'gbr' ),
+										'heading' => __( 'Job Board Report', 'gbr' ),
+										'slug' => 'job-board-report',
+										'cb' => 'jbr_report_callback'
+										),
+									array(
+										'name' => __( 'Job Board Email', 'gbr' ),
+										'heading' => __( 'Job Board Email', 'gbr' ),
+										'slug' => 'job-board-email',
+										'cb' => 'jbr_email_callback'
+										)
+									);
 
 			add_action( 'admin_menu', array( $this, 'sub_menu_page' ) );
 		}
@@ -30,19 +39,42 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 		public function sub_menu_page() {
 
 			if ($this->subMenuPage) {
-				$hook = add_options_page(
-							$this->subMenuPage['name'],
-							$this->subMenuPage['heading'],
-							$this->capability,
-							$this->subMenuPage['slug'],
-							array( $this, 'menu_page_callback' )
-						);
+				foreach ($this->subMenuPage as $param) {
+					$hook = add_options_page(
+								$param['name'],
+								$param['heading'],
+								$this->capability,
+								$param['slug'],
+								array( $this, $param['cb'] )
+							);
 				}
 			}
+		}
 
 
-		// Menu page callback
-		public function menu_page_callback() { ?>
+		// Email Menu page callback
+		public function jbr_email_callback() { ?>
+
+			<div class="wrap">
+				<h1><?php echo get_admin_page_title(); ?></h1>
+				<br class="clear">
+				<?php settings_errors(); ?>
+				<?php $this->email_report(); ?>
+				<p><?php _e( 'Select a date range. The month(s) and year(s) are taken into account to generate report.', 'jbr' ); ?></p>
+				<form method="post" action="">
+					<p><input type="text" name="jbr-date-picker" value="" placeholder="<?php _e( 'Select Date Range', 'jbr' ); ?>" /></p>
+					<p><label for="jbr-email-list"><?php _e( 'Enter emails, one per line', 'jbr' ) ?></label><br>
+						<textarea name="jbr-email-list" class="regular-text code" cols="200" rows="5"></textarea></p>
+					<?php submit_button( __( 'Email Report', 'jbr' ), 'primary', 'jbr-submit', false); ?>
+				</form>
+				<br class="clear">
+			</div>
+		<?php
+		}
+
+		
+		// Report Menu page callback
+		public function jbr_report_callback() { ?>
 
 			<div class="wrap">
 				<h1><?php echo get_admin_page_title(); ?></h1>
@@ -60,15 +92,115 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 		}
 
 
+		//Action on email form submit
+		public function email_report() {
+
+			$date_range = $this->date_range();
+			$emails = $this->email_list();
+
+			if ($date_range && $emails) {
+				if ($date_range != false && class_exists('JBR_REPORT')) {
+
+					$report = new JBR_REPORT();
+					$report->execution = 'S';
+					$report->date_range = $date_range;
+					$file = $report->generate();
+
+					foreach ($emails as $email) {
+						$emailed = $this->send_email($email, $file);
+					}
+				}
+			}
+
+			if ($emailed) {
+				$this->email_sent_msg($emailed);
+			}
+		}
+
+
+		// Sent email success message
+		public function email_sent_msg($emailed) { ?>
+
+			<div class="notice notice-<?php echo ( $emailed ? 'success' : 'error' ); ?> is-dismissible">
+				<p><?php echo ( $emailed ? __( 'Email sent successfully.', 'jbr' ) : __( 'Email couldn\'t be sent.', 'jbr' ) ); ?></p>
+ 			</div>
+			<?php
+		}
+
+
+		//Action on report form submit
 		public function generate_report() {
 
 			$date_range = $this->date_range();
 			if ($date_range != false && class_exists('JBR_REPORT')) {
 
 				$report = new JBR_REPORT();
+				$report->execution = 'D';
 				$report->date_range = $date_range;
 				$report->generate();
 			}
+		}
+
+
+		//Prepare emails array
+		public function email_list() {
+
+			if (isset($_POST['jbr-email-list'])) {
+
+				$emails_field = sanitize_textarea_field($_POST['jbr-email-list']);
+				$emails = explode("\n", $emails_field);
+				$email_list = array_values(
+								array_filter(
+									array_map(function($item) {
+										if ( filter_var( $item, FILTER_SANITIZE_EMAIL ) ) {
+											return $item;
+										}
+									}, $emails)));
+
+				return $email_list;
+			}
+		}
+
+
+		//Send email
+		public function send_email($email, $file) {
+
+			$to = $email; 
+			$from = "me@example.com"; 
+			$subject = __( 'Job Board Report', 'jbr');
+			$message = '<p>'.__('Please check out the report.', 'jbr').'</p>';
+
+			// a random hash will be necessary to send mixed content
+			$separator = md5(time());
+			$eol = PHP_EOL;
+			$filename = "report.pdf";
+			$attachment = chunk_split(base64_encode($file));
+
+			// main header
+			$headers  = "From: ".$from.$eol;
+			$headers .= "MIME-Version: 1.0".$eol; 
+			$headers .= "Content-Type: multipart/mixed; boundary=\"".$separator."\"";
+
+			$body = "--".$separator.$eol;
+			$body .= "Content-Transfer-Encoding: 7bit".$eol.$eol;
+			$body .= "This is a MIME encoded message.".$eol;
+			$body .= "--".$separator.$eol;
+			$body .= "Content-Type: text/html; charset=\"iso-8859-1\"".$eol;
+			$body .= "Content-Transfer-Encoding: 8bit".$eol.$eol;
+			$body .= $message.$eol;
+
+			// attachment
+			$body .= "--".$separator.$eol;
+			$body .= "Content-Type: application/octet-stream; name=\"".$filename."\"".$eol; 
+			$body .= "Content-Transfer-Encoding: base64".$eol;
+			$body .= "Content-Disposition: attachment".$eol.$eol;
+			$body .= $attachment.$eol;
+			$body .= "--".$separator."--";
+
+			// send message
+			$emailed = @mail($to, $subject, $body, $headers);
+
+			return $emailed;
 		}
 
 
@@ -77,7 +209,7 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 
 			if (isset($_POST['jbr-date-picker'])) {
 
-				$date_picker = $_POST['jbr-date-picker'];
+				$date_picker = sanitize_text_field($_POST['jbr-date-picker']);
 				if (strpos($date_picker, ' - ') !== false) {
 
 					$date_explode = explode(' - ', $date_picker);

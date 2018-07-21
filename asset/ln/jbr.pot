@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: job-board-report\n"
-"POT-Creation-Date: 2018-07-21 06:49+0530\n"
+"POT-Creation-Date: 2018-07-21 10:10+0530\n"
 "PO-Revision-Date: 2017-07-20 10:26+0530\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -37,31 +37,31 @@ msgstr ""
 msgid "Month"
 msgstr ""
 
-#: lib/report.php:24
+#: lib/report.php:25
 msgid " to "
 msgstr ""
 
-#: lib/report.php:27
+#: lib/report.php:28
 msgid "Pharmacist Locum and Team Recruitment Program Monthly Report Data"
 msgstr ""
 
-#: lib/report.php:29
+#: lib/report.php:30
 msgid "Total number of registrations"
 msgstr ""
 
-#: lib/report.php:32
+#: lib/report.php:33
 msgid "Monthly number of registrations"
 msgstr ""
 
-#: lib/report.php:35
+#: lib/report.php:36
 msgid "Total Database Members, Candidates and Employers."
 msgstr ""
 
-#: lib/report.php:38
+#: lib/report.php:39
 msgid "Number of Employer Database Searches"
 msgstr ""
 
-#: lib/report.php:41
+#: lib/report.php:42
 msgid "Average Total number of candidates appearing in database search"
 msgstr ""
 
@@ -74,22 +74,46 @@ msgid "is less than required "
 msgstr ""
 
 #. Plugin Name of the plugin/theme
-#: src/settings.php:20 src/settings.php:21
+#: src/settings.php:21 src/settings.php:22 src/settings.php:170
 msgid "Job Board Report"
 msgstr ""
 
-#: src/settings.php:52
+#: src/settings.php:27 src/settings.php:28
+msgid "Job Board Email"
+msgstr ""
+
+#: src/settings.php:63 src/settings.php:84
 msgid ""
 "Select a date range. The month(s) and year(s) are taken into account to "
 "generate report."
 msgstr ""
 
-#: src/settings.php:54
+#: src/settings.php:65 src/settings.php:86
 msgid "Select Date Range"
 msgstr ""
 
-#: src/settings.php:55
+#: src/settings.php:66
+msgid "Enter emails, one per line"
+msgstr ""
+
+#: src/settings.php:68
+msgid "Email Report"
+msgstr ""
+
+#: src/settings.php:87
 msgid "Generate Report"
+msgstr ""
+
+#: src/settings.php:125
+msgid "Email sent successfully."
+msgstr ""
+
+#: src/settings.php:125
+msgid "Email couldn't be sent."
+msgstr ""
+
+#: src/settings.php:171
+msgid "Please check out the report."
 msgstr ""
 
 #. Plugin URI of the plugin/theme

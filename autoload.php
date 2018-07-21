@@ -74,7 +74,7 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 		public function db_error_msg() { ?>
 
 			<div class="notice notice-error is-dismissible">
-				<p><?php _e( 'Database table Not installed correctly.', 'textdomain' ); ?></p>
+				<p><?php _e( 'Database table Not installed correctly.', 'jbr' ); ?></p>
  			</div>
 			<?php
 		}

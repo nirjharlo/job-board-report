@@ -18,7 +18,7 @@ if ( ! class_exists( 'JBR_SCRIPT' ) ) {
 		// Enter scripts into pages
 		public function backend_scripts() {
 
-			if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'job-board-report' ) return;
+			if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'job-board-report' && $_GET['page'] != 'job-board-email' ) return;
 
 			wp_register_script( 'jbr-moment', 'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js', array('jquery') );
 			wp_register_script( 'jbr-datepicker-js', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', array('jquery', 'jbr-moment') );
@@ -31,7 +31,7 @@ if ( ! class_exists( 'JBR_SCRIPT' ) ) {
 		// Custom datepicker script
 		public function datepicker_trigger() {
 
-			if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'job-board-report' ) return; ?>
+			if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'job-board-report' && $_GET['page'] != 'job-board-email' ) return; ?>
 
 			<script type="text/javascript">
 				jQuery(function() {
