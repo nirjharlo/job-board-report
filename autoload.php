@@ -28,7 +28,7 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 
 		public function old_data_install() {
 
-			if (class_exists('JBR_REGISTRATION_OLD_DATA_SAVE')) new JBR_REGISTRATION_OLD_DATA_SAVE();
+			if (class_exists('JBR_REGISTRATION_PAST_DATA')) new JBR_REGISTRATION_PAST_DATA();
 		}
 
 
