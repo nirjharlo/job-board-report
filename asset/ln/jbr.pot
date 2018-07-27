@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: job-board-report\n"
-"POT-Creation-Date: 2018-07-21 10:10+0530\n"
+"POT-Creation-Date: 2018-07-27 18:15+0530\n"
 "PO-Revision-Date: 2017-07-20 10:26+0530\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -74,7 +74,7 @@ msgid "is less than required "
 msgstr ""
 
 #. Plugin Name of the plugin/theme
-#: src/settings.php:21 src/settings.php:22 src/settings.php:170
+#: src/settings.php:21 src/settings.php:22 src/settings.php:184
 msgid "Job Board Report"
 msgstr ""
 
@@ -82,37 +82,45 @@ msgstr ""
 msgid "Job Board Email"
 msgstr ""
 
-#: src/settings.php:63 src/settings.php:84
+#: src/settings.php:63 src/settings.php:87
 msgid ""
 "Select a date range. The month(s) and year(s) are taken into account to "
 "generate report."
 msgstr ""
 
-#: src/settings.php:65 src/settings.php:86
-msgid "Select Date Range"
+#: src/settings.php:66 src/settings.php:89
+msgid "Select Start Month"
 msgstr ""
 
-#: src/settings.php:66
+#: src/settings.php:67 src/settings.php:90
+msgid "Select End Month"
+msgstr ""
+
+#: src/settings.php:69
 msgid "Enter emails, one per line"
 msgstr ""
 
-#: src/settings.php:68
+#: src/settings.php:71
 msgid "Email Report"
 msgstr ""
 
-#: src/settings.php:87
+#: src/settings.php:91
 msgid "Generate Report"
 msgstr ""
 
-#: src/settings.php:125
+#: src/settings.php:102
+msgid "End date should be greater than Start date."
+msgstr ""
+
+#: src/settings.php:139
 msgid "Email sent successfully."
 msgstr ""
 
-#: src/settings.php:125
+#: src/settings.php:139
 msgid "Email couldn't be sent."
 msgstr ""
 
-#: src/settings.php:171
+#: src/settings.php:185
 msgid "Please check out the report."
 msgstr ""
 
@@ -125,9 +133,9 @@ msgid "Report genaration plugin for Job Board theme."
 msgstr ""
 
 #. Author of the plugin/theme
-msgid "Nirjhar Lo"
+msgid "Pixelstorm"
 msgstr ""
 
 #. Author URI of the plugin/theme
-msgid "http://nirjharlo.com"
+msgid "http://pixelstorm.com.au"
 msgstr ""

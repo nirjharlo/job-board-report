@@ -62,7 +62,10 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 				<?php $this->email_report(); ?>
 				<p><?php _e( 'Select a date range. The month(s) and year(s) are taken into account to generate report.', 'jbr' ); ?></p>
 				<form method="post" action="">
-					<p><input type="text" name="jbr-date-picker" value="" placeholder="<?php _e( 'Select Date Range', 'jbr' ); ?>" /></p>
+					<p>
+						<input type="text" name="jbr-date-picker-start" value="" placeholder="<?php _e( 'Select Start Month', 'jbr' ); ?>" autocomplete="off" />
+						<input type="text" name="jbr-date-picker-end" value="" placeholder="<?php _e( 'Select End Month', 'jbr' ); ?>" autocomplete="off" />
+					</p>
 					<p><label for="jbr-email-list"><?php _e( 'Enter emails, one per line', 'jbr' ) ?></label><br>
 						<textarea name="jbr-email-list" class="regular-text code" cols="200" rows="5"></textarea></p>
 					<?php submit_button( __( 'Email Report', 'jbr' ), 'primary', 'jbr-submit', false); ?>
@@ -83,12 +86,22 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 				<?php $this->generate_report(); ?>
 				<p><?php _e( 'Select a date range. The month(s) and year(s) are taken into account to generate report.', 'jbr' ); ?></p>
 				<form method="post" action="">
-					<input type="text" name="jbr-date-picker" value="" placeholder="<?php _e( 'Select Date Range', 'jbr' ); ?>" />
+					<input type="text" name="jbr-date-picker-start" value="" placeholder="<?php _e( 'Select Start Month', 'jbr' ); ?>" autocomplete="off" />
+					<input type="text" name="jbr-date-picker-end" value="" placeholder="<?php _e( 'Select End Month', 'jbr' ); ?>" autocomplete="off" />
 					<?php submit_button( __( 'Generate Report', 'jbr' ), 'primary', 'jbr-submit', false); ?>
 				</form>
 				<br class="clear">
 			</div>
 		<?php
+		}
+
+
+		public function date_range_order_error() { ?>
+
+			<div class="notice notice-error is-dismissible">
+				<p><?php echo __( 'End date should be greater than Start date.', 'jbr' ); ?></p>
+ 			</div>
+			<?php
 		}
 
 
@@ -208,41 +221,45 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 		//Format the date range
 		public function date_range() {
 
-			if (isset($_POST['jbr-date-picker'])) {
+			if (isset($_POST['jbr-date-picker-start']) && isset($_POST['jbr-date-picker-end'])) {
 
-				$date_picker = sanitize_text_field($_POST['jbr-date-picker']);
-				if (strpos($date_picker, ' - ') !== false) {
+				$start_string = sanitize_text_field($_POST['jbr-date-picker-start']);
+				$end_string = sanitize_text_field($_POST['jbr-date-picker-end']);
 
-					$date_explode = explode(' - ', $date_picker);
-					$start_string = $date_explode[0];
-					$end_string = $date_explode[1];
+				$start_date = $start_string . '01';
+				$end_date = $end_string . '28';
 
-					if (strtotime($start_string) != false) {
-						$start = (new DateTime($start_string))->modify('first day of this month');
+				if (strtotime($start_string) != false) {
+					$start = (new DateTime($start_string))->modify('first day of this month');
+				}
+
+				if (strtotime($end_string) != false) {
+					$end = (new DateTime($end_string))->modify('last day of this month');
+				}
+
+				if ($start && $end) {
+
+					if ($end < $start) {
+						$this->date_range_order_error();
+						return;
 					}
 
-					if (strtotime($end_string) != false) {
-						$end = (new DateTime($end_string))->modify('last day of this month');
+					$interval = DateInterval::createFromDateString('1 month');
+					$period   = new DatePeriod($start, $interval, $end);
+
+					$dates = array();
+					foreach ($period as $dt) {
+
+						$range = array();
+						$start_range = $dt->format('Y-m-d');
+						$range['start'] = $start_range;
+						$end_range = (new DateTime($start_range))->modify('last day of this month');
+						$range['end'] = $end_range->format('Y-m-d');
+						$month = date('F-Y', strtotime($start_range));
+
+						$dates[$month] = $range;
 					}
-
-					if ($start && $end) {
-						$interval = DateInterval::createFromDateString('1 month');
-						$period   = new DatePeriod($start, $interval, $end);
-
-						$dates = array();
-						foreach ($period as $dt) {
-
-							$range = array();
-							$start_range = $dt->format('Y-m-d');
-							$range['start'] = $start_range;
-							$end_range = (new DateTime($start_range))->modify('last day of this month');
-							$range['end'] = $end_range->format('Y-m-d');
-							$month = date('F-Y', strtotime($start_range));
-
-							$dates[$month] = $range;
-						}
-						return $dates;
-					}
+					return $dates;
 				}
 			}
 		}

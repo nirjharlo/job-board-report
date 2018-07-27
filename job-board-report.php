@@ -4,8 +4,8 @@
  Plugin URI: http://jb.p2l.site
  Description: Report genaration plugin for Job Board theme.
  Version: 1.0
- Author: Nirjhar Lo
- Author URI: http://nirjharlo.com
+ Author: Pixelstorm
+ Author URI: http://pixelstorm.com.au
  Text Domain: jbr
  Domain Path: /asset/ln
  License: GPLv2

@@ -20,11 +20,13 @@ if ( ! class_exists( 'JBR_SCRIPT' ) ) {
 
 			if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'job-board-report' && $_GET['page'] != 'job-board-email' ) return;
 
-			wp_register_script( 'jbr-moment', 'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js', array('jquery') );
-			wp_register_script( 'jbr-datepicker-js', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', array('jquery', 'jbr-moment') );
+			wp_register_script( 'jbr-bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js', array('jquery') );
+			wp_register_script( 'jbr-moment', '//cdn.jsdelivr.net/momentjs/2.9.0/moment.min.js', array('jquery', 'jbr-bootstrap' ) );
+			wp_register_script( 'jbr-datepicker-js', '//cdn.jsdelivr.net/bootstrap.daterangepicker/1/daterangepicker.js', array('jquery', 'jbr-bootstrap', 'jbr-moment') );
 
 			wp_enqueue_script( 'jbr-datepicker-js' );
-			wp_enqueue_style( 'jbr-datepicker-css', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css' );
+			wp_enqueue_style( 'jbr-bootstrap-css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css' );
+			wp_enqueue_style( 'jbr-datepicker-css', '//cdn.jsdelivr.net/bootstrap.daterangepicker/1/daterangepicker-bs3.css' );
 		}
 
 
@@ -35,20 +37,32 @@ if ( ! class_exists( 'JBR_SCRIPT' ) ) {
 
 			<script type="text/javascript">
 				jQuery(function() {
-					jQuery('input[name="jbr-date-picker"]').daterangepicker({
-						'showDropdowns': false,
+					jQuery('input[name="jbr-date-picker-start"]').daterangepicker({
+						'singleDatePicker': true,
+						'showDropdowns': true,
 						'minYear': 2017,
 						'maxYear': <?php echo date('Y', strtotime('+1 year')); ?>,
 						'autoUpdateInput': false,
 						'autoApply': false,
+					}).on('hide.daterangepicker', function (ev, picker) {
+						var other = jQuery('input[name="jbr-date-picker-end"]').val();
+						jQuery('.table-condensed tbody tr:nth-child(2) td').click();
+						jQuery(this).val(picker.startDate.format('YYYY-MM'));
+						jQuery('input[name="jbr-date-picker-end"]').val(other);
 					});
 
-					jQuery('input[name="jbr-date-picker"]').on('apply.daterangepicker', function(ev, picker) {
-						jQuery(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
-					});
-
-					jQuery('input[name="jbr-date-picker"]').on('cancel.daterangepicker', function(ev, picker) {
-						jQuery(this).val('');
+					jQuery('input[name="jbr-date-picker-end"]').daterangepicker({
+						'singleDatePicker': true,
+						'showDropdowns': true,
+						'minYear': 2017,
+						'maxYear': <?php echo date('Y', strtotime('+1 year')); ?>,
+						'autoUpdateInput': false,
+						'autoApply': false,
+					}).on('hide.daterangepicker', function (ev, picker) {
+						var other = jQuery('input[name="jbr-date-picker-start"]').val();
+						jQuery('.table-condensed tbody tr:nth-child(2) td').click();
+						jQuery(this).val(picker.startDate.format('YYYY-MM'));
+						jQuery('input[name="jbr-date-picker-start"]').val(other);
 					});
 				});
 			</script>
@@ -57,9 +71,26 @@ if ( ! class_exists( 'JBR_SCRIPT' ) ) {
 				/**.drp-calendar .table-condensed thead tr:nth-child(2),
 				.drp-calendar .table-condensed tbody {
 					display: none
-				}*/
+				}
 				.drp-calendar .calendar-table {
 					width: 244px;
+				}*/
+				.table-condensed thead tr:nth-child(2),
+				.table-condensed tbody,
+				.daterangepicker_start_input,
+				.daterangepicker_end_input,
+				.cancelBtn {
+					display: none
+				}
+				.daterangepicker .calendar-date {
+					width: 250px;
+				}
+				.daterangepicker .ranges {
+					width: 60px;
+					padding-top: 5px;
+				}
+				.range_inputs {
+					width: 60px;
 				}
 			</style>
 			<?php
