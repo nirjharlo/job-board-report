@@ -57,7 +57,13 @@ if ( ! class_exists( 'JBR_REPORT' ) ) {
 			$pdf->SearchTable($search_header,$search_data);
 			$pdf->Ln(10);
 			$pdf->CandidateTable($candidate_header,$candidate_data);
-			return $pdf->Output($this->execution, 'report.pdf');
+/**
+
+*/
+
+			return $pdf->Output($this->execution, 'report.pdf', true);
+			ob_clean();
+			flush();
 		}
 
 

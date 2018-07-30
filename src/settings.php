@@ -15,6 +15,10 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 		// Add basic actions for menu and settings
 		public function __construct() {
 
+			if (isset($_POST['jbr-date-picker-start']) && isset($_POST['jbr-date-picker-end']) && isset($_POST['jbr-download-report'])) {
+				add_action( 'init', array( $this, 'download_report' ) );
+			}
+
 			$this->capability = 'manage_options';
 			$this->subMenuPage = array(
 									array(
@@ -32,6 +36,47 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 									);
 
 			add_action( 'admin_menu', array( $this, 'sub_menu_page' ) );
+		}
+
+
+		//Action on report form submit
+		public function download_report() {
+
+			$date_range = $this->date_range();
+			if ($date_range != false && class_exists('JBR_REPORT')) {
+
+				$report = new JBR_REPORT();
+				$report->execution = 'D';
+				$report->date_range = $date_range;
+				$file = $report->generate();
+			}
+		}
+
+
+		//Action on email form submit
+		public function email_report() {
+
+			$emailed = false;
+			$date_range = $this->date_range();
+			$emails = $this->email_list();
+
+			if ($date_range && $emails) {
+				if ($date_range != false && class_exists('JBR_REPORT')) {
+
+					$report = new JBR_REPORT();
+					$report->execution = 'S';
+					$report->date_range = $date_range;
+					$file = $report->generate();
+
+					foreach ($emails as $email) {
+						$emailed = $this->send_email($email, $file);
+					}
+				}
+			}
+
+			if (false != $emailed) {
+				$this->email_sent_msg($emailed);
+			}
 		}
 
 
@@ -66,6 +111,7 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 						<input type="text" name="jbr-date-picker-start" value="" placeholder="<?php _e( 'Select Start Month', 'jbr' ); ?>" autocomplete="off" />
 						<input type="text" name="jbr-date-picker-end" value="" placeholder="<?php _e( 'Select End Month', 'jbr' ); ?>" autocomplete="off" />
 					</p>
+					<input type="hidden" name="jbr-download-email" value="">
 					<p><label for="jbr-email-list"><?php _e( 'Enter emails, one per line', 'jbr' ) ?></label><br>
 						<textarea name="jbr-email-list" class="regular-text code" cols="200" rows="5"></textarea></p>
 					<?php submit_button( __( 'Email Report', 'jbr' ), 'primary', 'jbr-submit', false); ?>
@@ -83,11 +129,11 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 				<h1><?php echo get_admin_page_title(); ?></h1>
 				<br class="clear">
 				<?php settings_errors(); ?>
-				<?php $this->generate_report(); ?>
 				<p><?php _e( 'Select a date range. The month(s) and year(s) are taken into account to generate report.', 'jbr' ); ?></p>
 				<form method="post" action="">
 					<input type="text" name="jbr-date-picker-start" value="" placeholder="<?php _e( 'Select Start Month', 'jbr' ); ?>" autocomplete="off" />
 					<input type="text" name="jbr-date-picker-end" value="" placeholder="<?php _e( 'Select End Month', 'jbr' ); ?>" autocomplete="off" />
+					<input type="hidden" name="jbr-download-report" value="">
 					<?php submit_button( __( 'Generate Report', 'jbr' ), 'primary', 'jbr-submit', false); ?>
 				</form>
 				<br class="clear">
@@ -105,33 +151,6 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 		}
 
 
-		//Action on email form submit
-		public function email_report() {
-
-			$emailed = false;
-			$date_range = $this->date_range();
-			$emails = $this->email_list();
-
-			if ($date_range && $emails) {
-				if ($date_range != false && class_exists('JBR_REPORT')) {
-
-					$report = new JBR_REPORT();
-					$report->execution = 'S';
-					$report->date_range = $date_range;
-					$file = $report->generate();
-
-					foreach ($emails as $email) {
-						$emailed = $this->send_email($email, $file);
-					}
-				}
-			}
-
-			if (false != $emailed) {
-				$this->email_sent_msg($emailed);
-			}
-		}
-
-
 		// Sent email success message
 		public function email_sent_msg($emailed) { ?>
 
@@ -139,20 +158,6 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 				<p><?php echo ( $emailed ? __( 'Email sent successfully.', 'jbr' ) : __( 'Email couldn\'t be sent.', 'jbr' ) ); ?></p>
  			</div>
 			<?php
-		}
-
-
-		//Action on report form submit
-		public function generate_report() {
-
-			$date_range = $this->date_range();
-			if ($date_range != false && class_exists('JBR_REPORT')) {
-
-				$report = new JBR_REPORT();
-				$report->execution = 'D';
-				$report->date_range = $date_range;
-				$report->generate();
-			}
 		}
 
 
@@ -197,7 +202,6 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 
 			$body = "--".$separator.$eol;
 			$body .= "Content-Transfer-Encoding: 7bit".$eol.$eol;
-			$body .= "This is a MIME encoded message.".$eol;
 			$body .= "--".$separator.$eol;
 			$body .= "Content-Type: text/html; charset=\"iso-8859-1\"".$eol;
 			$body .= "Content-Transfer-Encoding: 8bit".$eol.$eol;
@@ -226,8 +230,8 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 				$start_string = sanitize_text_field($_POST['jbr-date-picker-start']);
 				$end_string = sanitize_text_field($_POST['jbr-date-picker-end']);
 
-				$start_date = $start_string . '01';
-				$end_date = $end_string . '28';
+				$start_date = $start_string . '-01';
+				$end_date = $end_string . '-28';
 
 				if (strtotime($start_string) != false) {
 					$start = (new DateTime($start_string))->modify('first day of this month');
