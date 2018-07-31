@@ -21,9 +21,10 @@ if ( ! class_exists( 'JBR_REPORT' ) ) {
 
 			$start = str_replace('-', ', ', $date_range[0]);
 			$end = str_replace('-', ', ', $date_range[count($date_range)-1]);
-			$date_count = count($date_range);
-			$report_range = $start . __(' to ', 'gbr') . $end . ' ('.$date_count.' months)';
+			$start_date = (new DateTime($start))->modify('first day of this month')->format('d/m/Y');
+			$end_date = (new DateTime($end))->modify('last day of this month')->format('d/m/Y');
 
+			$report_range = $start_date . ' - ' . $end_date;
 
 			$title = __('Pharmacist Locum and Team Recruitment Program Monthly Report Data', 'jbr');
 
@@ -57,11 +58,8 @@ if ( ! class_exists( 'JBR_REPORT' ) ) {
 			$pdf->SearchTable($search_header,$search_data);
 			$pdf->Ln(10);
 			$pdf->CandidateTable($candidate_header,$candidate_data);
-/**
 
-*/
-
-			return $pdf->Output($this->execution, 'report.pdf', true);
+			return $pdf->Output($this->execution, 'job-board-report-'.$start_date . '-' . $end_date.'.pdf', true);
 			ob_clean();
 			flush();
 		}

@@ -49,6 +49,7 @@ if ( ! class_exists( 'JBR_SETTINGS' ) ) {
 				$report->execution = 'D';
 				$report->date_range = $date_range;
 				$file = $report->generate();
+				exit();
 			}
 		}
 
