@@ -31,7 +31,7 @@ if ( ! class_exists( 'JBR_REPORT' ) ) {
 			$registration_total_header = __('Total number of registrations', 'jbr');
 			$registration_total_data = $registration['total'];
 
-			$registration_month_header = __('Monthly number of registrations', 'jbr');
+			$registration_month_header = __('New number of registrations', 'jbr');
 			$registration_month_data = $registration['month'];
 
 			$member_header = __('Total Database Members, Candidates and Employers.', 'jbr');

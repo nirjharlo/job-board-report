@@ -42,6 +42,7 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 			}
 
 			$data = array_merge($total, array( 'month' => $month ));
+
 			return $data;
 		}
 
@@ -49,24 +50,19 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 		//Get total registration
 		public function total_registration_get($start, $end) {
 
-			global $wpdb;
-			$registration = $wpdb->get_results(
-				"SELECT * FROM {$wpdb->prefix}$this->table_name 
-				WHERE registration_date > '$start' and registration_date <= '$end'", 'ARRAY_A'
-			);
-			if (count($registration) == 0) return;
-
-			$employer = $this->get_value($registration, 'employer');
-			$candidate = $this->get_value($registration, 'candidate');
-
-			$data = array_merge($employer, $candidate);
-
-			return array( 'total' => $data );
+			return array( 'total' => $this->fetch_data($start, $end) );
 		}
 
 
 		//Get monthly registration
 		public function month_registration_get($start, $end) {
+
+			return $this->fetch_data($start, $end);
+		}
+
+
+		// Fetch data from DB
+		public function fetch_data($start, $end) {
 
 			global $wpdb;
 			$registration = $wpdb->get_results(
@@ -76,23 +72,54 @@ if ( ! class_exists( 'JBR_REGISTRATION_GET' ) ) {
 			);
 			if (count($registration) == 0) return;
 
-			$employer_month = $this->get_value($registration, 'employer');
-			$candidate_month = $this->get_value($registration, 'candidate');
+			$employers = $this->get_value($registration, 'employer');
+			$candidates = $this->get_value($registration, 'candidate');
 
-			$month = array_merge($employer_month, $candidate_month);
-			return $month;
+			$employer_state = array();
+			foreach ($employers as $state => $count) {
+				$employer_state[$state] = $count;
+			}
+
+			$candidate_state = array();
+			foreach ($candidates as $state => $count) {
+				$candidate_state[$state] = $count;
+			}
+
+			$state_list = array('ACT','New South Wales', 'Northern Territory', 'Queensland', 'Victoria', 'Western Australia');
+
+			$states = array();
+			foreach ($state_list as $state) {
+				$transient = array();
+				if (array_key_exists($state, $employer_state)) {
+					$transient['employer'] = $employer_state[$state]; 
+				}
+				if (array_key_exists($state, $candidate_state)) {
+					$transient['candidate'] = $candidate_state[$state];
+				}
+				$states[$state] = $transient;
+			}
+
+			$states = array_filter($states);
+
+			return $states;
 		}
 
 
 		//Format the array to get value
 		public function get_value($array, $type) {
 
-			$values = array_count_values(
-							array_filter(
-								array_map(function($item) use ($type) {
-									if ( $item['user_type'] == $type ) { return $type; }
-								}, $array )));
-			return $values;
+			$values = array_values(
+						array_filter(
+							array_map(function($item) use ($type) {
+								if ( $item['user_type'] == $type ) { return maybe_unserialize($item['state']); }
+						}, $array )));
+
+			$output = array();
+			foreach ($values as $value) {
+				$output = array_merge($output, array_filter($value));
+			}
+			
+			return array_count_values($output);
 		}
 	}
 } ?>

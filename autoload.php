@@ -6,8 +6,6 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 	
 	final class JBR_BUILD {
 
-
-
 		public function installation() {
 
 			if (class_exists('JBR_INSTALL')) {
@@ -41,6 +39,7 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 				$db->sql = "ID mediumint(9) NOT NULL AUTO_INCREMENT,
 							user_type VARCHAR(16) NOT NULL,
 							user_id SMALLINT(5) NOT NULL,
+							state VARCHAR(512),
 							registration_date DATETIME NOT NULL,
 							UNIQUE KEY (ID, user_id)";
 				$db->build();
@@ -108,10 +107,16 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 		}
 
 
-		//Include data in plugin's tables
+		//Include search data in plugin's tables
 		public function get_user_data() {
 
 			if ( class_exists( 'JBR_REGISTRATION_SAVE' ) ) new JBR_REGISTRATION_SAVE();
+		}
+
+		//Include registration data in plugin's tables
+		public function get_registration_data() {
+
+			if ( class_exists( 'JBR_REGISTRATION_STATE' ) ) new JBR_REGISTRATION_STATE();
 		}
 
 
@@ -161,6 +166,7 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 			require_once ('lib/data/push/search.php');
 			require_once ('lib/data/push/search-ajax.php');
 			require_once ('lib/data/push/registration.php');
+			require_once ('lib/data/push/registration-ajax.php');
 			require_once ('lib/data/push/registration-old.php');
 
 			require_once ('lib/data/get/registartion.php');
@@ -183,9 +189,12 @@ if ( ! class_exists( 'JBR_BUILD' ) ) {
 			//remove the DB upon uninstallation
 			register_uninstall_hook( JBR_FILE, array( 'JBR_BUILD', 'db_uninstall' ) ); //$this won't work here.
 
-			//Store registration and search data
+			//Store registration data
 			register_activation_hook( JBR_FILE, array( $this, 'old_data_install' ) );
 			$this->get_user_data();
+			$this->get_registration_data();
+
+			//Store search data
 			add_action('template_redirect', array($this, 'get_search_data'));
 			$this->get_search_data_ajax();
 

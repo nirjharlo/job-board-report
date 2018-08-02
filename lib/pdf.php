@@ -35,17 +35,29 @@ if ( ! class_exists( 'JBR_PDF' ) ) {
 			$this->Ln(10);
 
 			$this->SetFont('Arial','',10);
-			$heading = array( 'total', 'employer', 'candidate');
+			$heading = array( 'state', 'employer', 'candidate', 'total');
 
 			$fill = true;
-			$this->Cell(60,6,ucwords($heading[0]),0,0,'L',$fill);
-			$this->Cell(60,6,ucwords($heading[1]),0,0,'C',$fill);
-			$this->Cell(60,6,ucwords($heading[2]),0,0,'R',$fill);
+			$this->Cell(45,6,ucwords($heading[0]),0,0,'L',$fill);
+			$this->Cell(45,6,ucwords($heading[1]),0,0,'C',$fill);
+			$this->Cell(45,6,ucwords($heading[2]),0,0,'C',$fill);
+			$this->Cell(45,6,ucwords($heading[3]),0,0,'R',$fill);
 			$this->Ln();
+
 			$fill = false;
-			$this->Cell(60,6,number_format($data[$heading[1]]+$data[$heading[2]]),0,0,'L',$fill);
-			$this->Cell(60,6,number_format($data[$heading[1]]),0,0,'C',$fill);
-			$this->Cell(60,6,number_format($data[$heading[2]]),0,0,'R',$fill);
+			foreach($data as $state => $row) {
+				if ($row != NULL && $row != false) {
+					$employer = array_key_exists($heading[1], $row) ? $row[$heading[1]] : 0;
+					$candidate = array_key_exists($heading[2], $row) ? $row[$heading[2]] : 0;
+
+					$this->Cell(45,6,$state,0,0,'L',$fill);
+					$this->Cell(45,6,number_format($employer),0,0,'C',$fill);
+					$this->Cell(45,6,number_format($candidate),0,0,'C',$fill);
+					$this->Cell(45,6,number_format($employer+$candidate),0,0,'R',$fill);
+					$this->Ln();
+					$fill = !$fill;
+				}
+			}
 			$this->Ln();
 		}
 
@@ -62,29 +74,36 @@ if ( ! class_exists( 'JBR_PDF' ) ) {
 			$this->Ln(10);
 
 			$this->SetFont('Arial','',10);
-			$heading = array( 'total', 'employer', 'candidate');
-
-			$fill = true;
-			$this->Cell(45,6,__('Month','jbr'),0,0,'L',$fill);
-			$this->Cell(45,6,ucwords($heading[0]),0,0,'C',$fill);
-			$this->Cell(45,6,ucwords($heading[1]),0,0,'C',$fill);
-			$this->Cell(45,6,ucwords($heading[2]),0,0,'R',$fill);
-			$this->Ln();
+			$heading = array( 'state', 'employer', 'candidate', 'total');
 
 			$fill = false;
 			foreach($data as $month => $row) {
 
 				if ($row != NULL && $row != false) {
 
-					$employer = array_key_exists($heading[1], $row) ? $row[$heading[1]] : 0;
-					$candidate = array_key_exists($heading[2], $row) ? $row[$heading[2]] : 0;
+					$this->Cell(40,6,str_replace('-', ', ', ($month)),0,0,'L','true');
+					$this->Ln(10);
 
-					$this->Cell(45,6,str_replace('-', ', ', ($month)),0,0,'L',$fill);
-					$this->Cell(45,6,number_format($employer+$candidate),0,0,'C',$fill);
-					$this->Cell(45,6,number_format($employer),0,0,'C',$fill);
-					$this->Cell(45,6,number_format($candidate),0,0,'R',$fill);
+					$fill = true;
+					$this->Cell(45,6,ucwords($heading[0]),0,0,'L',$fill);
+					$this->Cell(45,6,ucwords($heading[1]),0,0,'C',$fill);
+					$this->Cell(45,6,ucwords($heading[2]),0,0,'C',$fill);
+					$this->Cell(45,6,ucwords($heading[3]),0,0,'R',$fill);
 					$this->Ln();
-					$fill = !$fill;
+
+					$fill = false;
+					foreach ($row as $state => $value) {
+
+						$employer = array_key_exists($heading[1], $value) ? $value[$heading[1]] : 0;
+						$candidate = array_key_exists($heading[2], $value) ? $value[$heading[2]] : 0;
+
+						$this->Cell(45,6,$state,0,0,'L',$fill);
+						$this->Cell(45,6,number_format($employer),0,0,'C',$fill);
+						$this->Cell(45,6,number_format($candidate),0,0,'C',$fill);
+						$this->Cell(45,6,number_format($employer+$candidate),0,0,'R',$fill);
+						$this->Ln();
+						$fill = !$fill;
+					}
 				}
 			}
 		}
@@ -174,24 +193,26 @@ if ( ! class_exists( 'JBR_PDF' ) ) {
 			$this->SetLineWidth(.3);
 			$this->SetFont('Arial','',12);
 
-			$this->Cell(90,9,$header,0,0,'L');
-			$this->Ln(10);
+			if ($data) {
+				$this->Cell(90,9,$header,0,0,'L');
+				$this->Ln(10);
 
-			$this->SetFont('Arial','',10);
-			foreach($data as $month => $row) {
+				$this->SetFont('Arial','',10);
+				foreach($data as $month => $row) {
 
-				if ($row != NULL && $row != false) {
+					if ($row != NULL && $row != false) {
 
-					$this->Cell(40,6,str_replace('-', ', ', ($month)),0,0,'L','true');
-					$this->Ln(10);
+						$this->Cell(40,6,str_replace('-', ', ', ($month)),0,0,'L','true');
+						$this->Ln(10);
 
-					$fill = true;
-					foreach ($row as $key => $value) {
+						$fill = true;
+						foreach ($row as $key => $value) {
 
-						$this->Cell(90,6,ucwords(str_replace('-', ' ', $key)),0,0,'L',$fill);
-						$this->Cell(90,6,number_format($value),0,0,'R',$fill);
-						$this->Ln();
-						$fill = !$fill;
+							$this->Cell(90,6,ucwords(str_replace('-', ' ', $key)),0,0,'L',$fill);
+							$this->Cell(90,6,number_format($value),0,0,'R',$fill);
+							$this->Ln();
+							$fill = !$fill;
+						}
 					}
 				}
 			}
@@ -207,17 +228,20 @@ if ( ! class_exists( 'JBR_PDF' ) ) {
 			$this->SetLineWidth(.3);
 			$this->SetFont('Arial','',12);
 
-			$this->Cell(90,9,$header,0,0,'L');
-			$this->Ln(10);
+			if($data) {
 
-			$this->SetFont('Arial','',10);
-			$fill = true;
-			foreach($data as $key => $value) {
+				$this->Cell(90,9,$header,0,0,'L');
+				$this->Ln(10);
 
-				$this->Cell(90,6,ucwords(str_replace('-', ' ', $key)),0,0,'L',$fill);
-				$this->Cell(90,6,number_format($value),0,0,'R',$fill);
-				$this->Ln();
-				$fill = !$fill;
+				$this->SetFont('Arial','',10);
+				$fill = true;
+				foreach($data as $key => $value) {
+
+					$this->Cell(90,6,ucwords(str_replace('-', ' ', $key)),0,0,'L',$fill);
+					$this->Cell(90,6,number_format($value),0,0,'R',$fill);
+					$this->Ln();
+					$fill = !$fill;
+				}
 			}
 			$this->Ln();
 		}
